@@ -2,66 +2,42 @@ package co.com.powerup2025.api.request_dto;
 
 import java.math.BigDecimal;
 
-import javax.xml.transform.Source;
-
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Schema(name = "UsuarioRequestDTO", description = "Usuario Request DTO", requiredProperties = { "nombre", "apellido",
+        "email", "idRol", "salarioBase" })
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder(toBuilder = true)
-public class UsuarioRequestDTO implements Source {
+public class UsuarioRequestDTO {
 
-    // @Schema(description = "ID del usuario (solo para actualizaciones)", required
-    // = false)
+    @Schema(description = "ID del usuario (solo para actualizaciones)")
     private Integer idUsuario;
 
-    @NotBlank(message = "El nombre es obligatorio")
+    @Schema(description = "Nombre del usuario")
     private String nombre;
 
-    @NotBlank(message = "El apellido es obligatorio")
+    @Schema(description = "Apellido del usuario")
     private String apellido;
 
-    @Email(message = "El email debe tener formato válido")
-    @NotBlank(message = "El email es obligatorio")
+    @Schema(description = "Correo electrónico del usuario")
     private String email;
 
-    @NotNull(message = "El documento de identidad es obligatorio")
-    @Min(value = 1000000, message = "Documento inválido")
+    @Schema(description = "Documento de identidad del usuario")
     private Long documentoIdentidad;
 
-    @NotBlank(message = "El teléfono es obligatorio")
+    @Schema(description = "Teléfono del usuario")
     private String telefono;
 
-    @NotNull(message = "El rol es obligatorio")
+    @Schema(description = "ID del rol del usuario")
     private Integer idRol;
 
-    @NotNull(message = "El salario base es obligatorio")
-    @DecimalMin(value = "0.0", inclusive = false, message = "El salario debe ser mayor a cero")
-    @DecimalMax(value = "15000001", inclusive = false, message = "El salario debe ser menor o igual a 15000000")
+    @Schema(description = "Salario base del usuario")
     private BigDecimal salarioBase;
 
-    @Override
-    public void setSystemId(String systemId) {
-
-    }
-
-    @Override
-    public String getSystemId() {
-        return "";
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return Source.super.isEmpty();
-    }
 }

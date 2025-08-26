@@ -31,3 +31,9 @@ adapters:
     schema: prestamos
     username: dev_user
     password: dev123
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+ 
