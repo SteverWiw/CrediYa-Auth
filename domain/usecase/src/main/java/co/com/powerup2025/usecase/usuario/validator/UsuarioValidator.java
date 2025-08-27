@@ -30,11 +30,11 @@ public class UsuarioValidator {
                 .filter(u -> emailPattern.matcher(u.getEmail()).matches())
                 .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_009)))
 
-                .filter(u -> u.getDocumentoIdentidad() != null && u.getDocumentoIdentidad() >= 1000000)
-                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_005)))
+               // .filter(u -> u.getDocumentoIdentidad() != null && u.getDocumentoIdentidad() >= 1000000)
+                //.switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_005)))
 
-                .filter(u -> u.getTelefono() != null && !u.getTelefono().isBlank())
-                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_006)))
+                //.filter(u -> u.getTelefono() != null && !u.getTelefono().isBlank())
+                //.switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_006)))
 
                 .filter(u -> u.getIdRol() != null)
                 .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_007)))

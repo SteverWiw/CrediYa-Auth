@@ -24,7 +24,7 @@ public class OpenApiConfig {
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
                 .group("public")
-                .packagesToScan("co.com.powerup2025.api") // routers/handlers viven aquí
+                .packagesToScan("co.com.powerup2025.api")
                 .build();
     }
 }
