@@ -12,7 +12,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import co.com.powerup2025.model.exception.gateways.iErrorCode;
 import co.com.powerup2025.model.exception.enums.ErrorCode;
 import co.com.powerup2025.model.exception.exceptions.BusinessException;
-import co.com.powerup2025.model.usuario.gateways.LoggerPort;
+import co.com.powerup2025.model.exception.gateways.LoggerPort;
 import reactor.core.publisher.Mono;
 
 @Component

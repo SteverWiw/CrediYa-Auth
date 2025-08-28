@@ -18,7 +18,7 @@ import co.com.powerup2025.model.exception.enums.ErrorCode;
 import co.com.powerup2025.model.usuario.Usuario;
 import co.com.powerup2025.model.usuario.gateways.UsuarioRepository;
 import co.com.powerup2025.model.exception.exceptions.BusinessException;
-import co.com.powerup2025.model.usuario.gateways.LoggerPort;
+import co.com.powerup2025.model.exception.gateways.LoggerPort;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 

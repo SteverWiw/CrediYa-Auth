@@ -1,12 +1,12 @@
 Proyecto/
+├── application/         ← Main App
 ├── domain/
 │   ├── model/           ← Entidades y objetos de valor
 │   └── usecase/         ← Lógica de negocio pura
-├── application/         ← Servicios, mappers y orquestación
-├── infrastructure/      ← Adaptadores y repositorios
+├── infrastructure/      
 │   ├── entrypoints/     ← Routers y handlers
 │   └── driven-adapters/ ← Adaptadores de BD y loggers
-├── helpers/             ← Utilidades y excepciones compartidas
+│   └── helpers/         ← Utilidades y helper de excepciones
 
 Tecnologías
 
@@ -24,18 +24,21 @@ Configuración
 
 Configura la base de datos PostgreSQL y las credenciales en application.yml:
 
-spring:
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/crediya
-    username: your_user
-    password: your_password
+adapters:
+r2dbc:
+host: localhost
+port: 5432
+database: tu_bd
+schema: tu_schema
+username: tu_username
+password: tu_password
 
 
 Variables opcionales:
 
 logging:
-  level:
-    root: INFO
+level:
+root: INFO
 
 Endpoints
 Método	Ruta	                    Descripción	            Request	            Response

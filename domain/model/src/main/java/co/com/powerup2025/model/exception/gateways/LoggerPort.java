@@ -1,4 +1,4 @@
-package co.com.powerup2025.model.usuario.gateways;
+package co.com.powerup2025.model.exception.gateways;
 
 import reactor.core.publisher.Mono;
 

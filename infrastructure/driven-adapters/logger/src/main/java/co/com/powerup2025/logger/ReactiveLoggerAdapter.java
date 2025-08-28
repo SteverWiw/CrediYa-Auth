@@ -1,6 +1,6 @@
 package co.com.powerup2025.logger;
 
-import co.com.powerup2025.model.usuario.gateways.LoggerPort;
+import co.com.powerup2025.model.exception.gateways.LoggerPort;
 import org.slf4j.Logger;
 
 
