@@ -6,6 +6,7 @@ public enum ErrorCode implements iErrorCode {
 
     USR_001("El usuario no fue encontrado", Severity.HIGH, ErrorModule.USUARIO),
     USR_002("El email ya esta en uso", Severity.HIGH, ErrorModule.USUARIO),
+    USR_003("El usuario no fue encontrado email", Severity.HIGH, ErrorModule.USUARIO),
 
     VAL_001 ("El nombre es obligatorio", Severity.MEDIUM, ErrorModule.USUARIO),
     VAL_002 ("El apellido es obligatorio", Severity.MEDIUM, ErrorModule.USUARIO),

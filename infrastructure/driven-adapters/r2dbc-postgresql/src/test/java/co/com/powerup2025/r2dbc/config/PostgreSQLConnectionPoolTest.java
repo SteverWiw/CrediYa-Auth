@@ -3,6 +3,7 @@ package co.com.powerup2025.r2dbc.config;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
+import io.r2dbc.spi.ConnectionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +37,7 @@ class PostgreSQLConnectionPoolTest {
 
     @Test
     void buildConnectionPoolSuccess() {
-        ConnectionPool pool = connectionPool.getConnectionConfig(properties);
+        ConnectionFactory pool = connectionPool.connectionFactory(properties);
         assertNotNull(pool);
     }
 }

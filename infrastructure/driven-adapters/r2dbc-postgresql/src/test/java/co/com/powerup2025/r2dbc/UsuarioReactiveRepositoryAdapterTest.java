@@ -25,7 +25,7 @@ class UsuarioReactiveRepositoryAdapterTest {
         private UsuarioRepositoryAdapter adapter;
 
         @Mock
-        private UsuarioRepository repository;
+        private UsuarioR2dbcRepository repository;
 
         @Mock
         private ObjectMapper mapper;

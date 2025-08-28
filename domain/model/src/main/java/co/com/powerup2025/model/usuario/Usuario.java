@@ -2,8 +2,7 @@ package co.com.powerup2025.model.usuario;
 import lombok.*;
 
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)

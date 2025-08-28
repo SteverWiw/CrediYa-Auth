@@ -3,6 +3,8 @@ package co.com.powerup2025.api.handler;
 import java.util.UUID;
 
 import co.com.powerup2025.errorhelper.ReactiveErrorHelper;
+import co.com.powerup2025.model.exception.enums.ErrorCode;
+import co.com.powerup2025.model.exception.exceptions.BusinessException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -23,14 +25,14 @@ public class UsuarioHandler {
     private final UsuarioMapper mapper;
     private final ReactiveErrorHelper errorHelper;
     private final LoggerPort logger;
+    private final String traceId = UUID.randomUUID().toString();
 
     public Mono<ServerResponse> createUser(ServerRequest request) {
 
-        String traceId = UUID.randomUUID().toString();
 
         return request.bodyToMono(UsuarioRequestDTO.class)
                 .doOnSubscribe(s -> logger.info("Iniciando creación de usuario", traceId))
-                .doOnNext(dto -> logger.info(String.format("Datos recibidos: %s",dto), traceId))
+                .doOnNext(dto -> logger.info(String.format("Datos recibidos: %s", dto), traceId))
                 .map(mapper::toEntity)
                 .flatMap(userUsecase::createUser)
                 .map(mapper::toDto)
@@ -42,5 +44,18 @@ public class UsuarioHandler {
                 .onErrorResume(errorHelper::handle)
                 .contextWrite(Context.of("traceId", traceId));
     }
+
+    public Mono<ServerResponse> getUser(ServerRequest request) {
+        String email = request.queryParam("email").orElseThrow(() -> new BusinessException(ErrorCode.VAL_003));
+        return userUsecase.getUserByEmail(email)
+                .doOnSubscribe(e -> logger.info("Iniciando consulta de usuario por email", traceId))
+                .doOnEach(u -> logger.info(String.format("Datos recibidos: %s", email), traceId))
+                .doOnNext(u -> logger.info(String.format("Usuario encontrado: %s", u), traceId))
+                .flatMap(usuario -> ServerResponse.ok().bodyValue(usuario))
+                .doOnTerminate(() -> logger.info("Flujo finalizado", traceId))
+                .onErrorResume(errorHelper::handle)
+                .contextWrite(Context.of("traceId", traceId));
+    }
+
 
 }

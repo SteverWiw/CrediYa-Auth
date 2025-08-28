@@ -35,6 +35,12 @@ public class UsuarioValidator {
                         : Mono.error(new BusinessException(errores)));
     }
 
+    public static Mono<Boolean> validarEmail(String email) {
+        return (isBlank(email) || !emailPattern.matcher(email).matches())
+                    ? Mono.error(new BusinessException(ErrorCode.VAL_003))
+                    : Mono.just(true);
+    }
+
     private static boolean isBlank(String value) {
         return value == null || value.isBlank();
     }

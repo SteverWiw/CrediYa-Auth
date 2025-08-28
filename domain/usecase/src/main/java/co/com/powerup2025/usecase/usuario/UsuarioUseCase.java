@@ -17,11 +17,14 @@ public class UsuarioUseCase implements UsuarioService {
     private final LoggerPort logger;
 
 
-
-
     @Override
-    public Mono<Boolean> userExistsByEmail(String email) {
-        return usuarioRepository.existsByEmail(email);
+    public Mono<Usuario> getUserByEmail(String email) {
+        return UsuarioValidator.validarEmail(email)
+                .flatMap(exists -> Boolean.TRUE.equals(exists)
+                        ? usuarioRepository.getUserByEmail(email)
+                        .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.USR_003)))
+                        : Mono.error(new BusinessException(ErrorCode.USR_001))
+                );
     }
 
 
@@ -32,8 +35,8 @@ public class UsuarioUseCase implements UsuarioService {
                 .doOnSubscribe(s -> logger.info("Iniciando creación de usuario"))
                 .flatMap(v -> usuarioRepository.existsByEmail(user.getEmail()))
                 .flatMap(exists -> Boolean.TRUE.equals(exists)
-                    ?  Mono.error(new BusinessException(ErrorCode.USR_002))
-                    : usuarioRepository.save(user)
+                        ? Mono.error(new BusinessException(ErrorCode.USR_002))
+                        : usuarioRepository.save(user)
                 )
                 .doOnSuccess(u -> logger.info("Usuario creado exitosamente"));
     }

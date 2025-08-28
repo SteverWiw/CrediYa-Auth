@@ -8,15 +8,16 @@ import co.com.powerup2025.model.usuario.Usuario;
 import co.com.powerup2025.r2dbc.entity.UsuarioEntity;
 import co.com.powerup2025.r2dbc.helper.UsuarioAdapterOperations;
 import reactor.core.publisher.Mono;
+import co.com.powerup2025.model.usuario.gateways.UsuarioRepository;
 
 @Repository
 public class UsuarioRepositoryAdapter
-        extends UsuarioAdapterOperations<Usuario, UsuarioEntity, Integer, UsuarioRepository>
-        implements co.com.powerup2025.model.usuario.gateways.UsuarioRepository {
+        extends UsuarioAdapterOperations<Usuario, UsuarioEntity, Integer, UsuarioR2dbcRepository>
+        implements UsuarioRepository {
 
     private final TransactionalOperator txOperator;
 
-    public UsuarioRepositoryAdapter(UsuarioRepository repository, ObjectMapper mapper,
+    public UsuarioRepositoryAdapter(UsuarioR2dbcRepository repository, ObjectMapper mapper,
                                     TransactionalOperator txOperator) {
         super(repository, mapper, d -> mapper.mapBuilder(d, Usuario.UsuarioBuilder.class).build());
         this.txOperator = txOperator;
@@ -25,6 +26,13 @@ public class UsuarioRepositoryAdapter
     @Override
     public Mono<Boolean> existsByEmail(String email) {
         return repository.existsByEmail(email);
+    }
+
+    @Override
+    public Mono<Usuario> getUserByEmail(String email) {
+        return Mono.just(email)
+                .flatMap(repository::findByEmail)
+                .map(entity -> mapper.mapBuilder(entity, Usuario.UsuarioBuilder.class).build());
     }
 
     @Override

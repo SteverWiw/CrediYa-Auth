@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 
 public interface UsuarioService {
 
-    Mono<Boolean> userExistsByEmail(String email);
+    Mono<Usuario> getUserByEmail(String email);
 
     Mono<Usuario> createUser(Usuario user);
 

@@ -32,6 +32,9 @@ adapters:
     username: dev_user
     password: dev123
 springdoc:
+  api-docs:
+    path: /v3/api-docs
+    format: yaml
   swagger-ui:
     path: /swagger-ui.html
     operationsSorter: method
