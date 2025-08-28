@@ -1,8 +1,8 @@
-package co.com.powerup2025.api.mapper;
+package co.com.powerup2025.errorhelper.mapper;
 
 
 import org.springframework.http.HttpStatus;
-import co.com.powerup2025.model.exception.iErrorCode;
+import co.com.powerup2025.model.exception.gateways.iErrorCode;
 
 public class ErrorCodeMapper {
 

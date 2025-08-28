@@ -1,4 +1,4 @@
-package co.com.powerup2025.usecase.spi;
+package co.com.powerup2025.model.usuario.gateways;
 
 import reactor.core.publisher.Mono;
 

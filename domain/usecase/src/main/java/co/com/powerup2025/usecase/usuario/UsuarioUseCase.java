@@ -3,14 +3,12 @@ package co.com.powerup2025.usecase.usuario;
 import co.com.powerup2025.model.exception.enums.ErrorCode;
 import co.com.powerup2025.model.usuario.Usuario;
 import co.com.powerup2025.model.usuario.gateways.UsuarioRepository;
-import co.com.powerup2025.usecase.shared.BusinessException;
-import co.com.powerup2025.usecase.spi.LoggerPort;
+import co.com.powerup2025.model.exception.exceptions.BusinessException;
+import co.com.powerup2025.model.usuario.gateways.LoggerPort;
 import co.com.powerup2025.usecase.usuario.validator.UsuarioValidator;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
-import co.com.powerup2025.usecase.usuario.interfaces.UsuarioService;
-
-import java.util.Map;
+import co.com.powerup2025.model.usuario.gateways.UsuarioService;
 
 @RequiredArgsConstructor
 public class UsuarioUseCase implements UsuarioService {

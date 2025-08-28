@@ -5,23 +5,22 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import co.com.powerup2025.model.exception.enums.ErrorCode;
-import co.com.powerup2025.usecase.shared.BusinessException;
-import co.com.powerup2025.usecase.spi.LoggerPort;
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import co.com.powerup2025.model.exception.enums.ErrorCode;
 import co.com.powerup2025.model.usuario.Usuario;
 import co.com.powerup2025.model.usuario.gateways.UsuarioRepository;
+import co.com.powerup2025.model.exception.exceptions.BusinessException;
+import co.com.powerup2025.model.usuario.gateways.LoggerPort;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import java.math.BigDecimal;
 
 @ExtendWith(MockitoExtension.class)
 class UsuarioUseCaseTest {
@@ -42,9 +41,9 @@ class UsuarioUseCaseTest {
 
                 usuario = new Usuario();
                 usuario.setIdUsuario(1);
-                usuario.setEmail("test@test.com");
-                usuario.setNombre("Test");
-                usuario.setApellido("User");
+                usuario.setEmail("prueba@test.com");
+                usuario.setNombre("prueba");
+                usuario.setApellido("prueba");
                 usuario.setDocumentoIdentidad(123456789L);
                 usuario.setIdRol(1);
                 usuario.setSalarioBase(BigDecimal.valueOf(150000));
@@ -52,53 +51,52 @@ class UsuarioUseCaseTest {
 
         @Test
         void shouldReturnTrueWhenUserExistsByEmail() {
-                when(usuarioRepository.existsByEmail("test@test.com"))
-                        .thenReturn(Mono.just(true));
+                when(usuarioRepository.existsByEmail("prueba@test.com"))
+                                .thenReturn(Mono.just(true));
 
-                Mono<Boolean> result = usuarioUseCase.userExistsByEmail("test@test.com");
+                Mono<Boolean> result = usuarioUseCase.userExistsByEmail("prueba@test.com");
 
                 StepVerifier.create(result)
-                        .expectNext(true)
-                        .verifyComplete();
+                                .expectNext(true)
+                                .verifyComplete();
 
-                verify(usuarioRepository).existsByEmail("test@test.com");
+                verify(usuarioRepository).existsByEmail("prueba@test.com");
         }
 
         @Test
         void shouldCreateUserWhenEmailNotExists() {
-                when(usuarioRepository.existsByEmail("test@test.com"))
-                        .thenReturn(Mono.just(false));
+                when(usuarioRepository.existsByEmail("prueba@test.com"))
+                                .thenReturn(Mono.just(false));
 
                 when(usuarioRepository.save(any(Usuario.class)))
-                        .thenReturn(Mono.just(usuario));
+                                .thenReturn(Mono.just(usuario));
 
                 Mono<Usuario> result = usuarioUseCase.createUser(usuario);
 
                 StepVerifier.create(result)
-                        .expectNextMatches(u -> u.getEmail().equals("test@test.com"))
-                        .verifyComplete();
+                                .expectNextMatches(u -> u.getEmail().equals("prueba@test.com"))
+                                .verifyComplete();
 
                 verify(logger).info("Iniciando creación de usuario");
                 verify(logger).info("Usuario creado exitosamente");
-                verify(usuarioRepository).existsByEmail("test@test.com");
+                verify(usuarioRepository).existsByEmail("prueba@test.com");
                 verify(usuarioRepository).save(any(Usuario.class));
         }
 
         @Test
         void shouldFailWhenEmailAlreadyExists() {
-                when(usuarioRepository.existsByEmail("test@test.com"))
-                        .thenReturn(Mono.just(true));
+                when(usuarioRepository.existsByEmail("prueba@test.com"))
+                                .thenReturn(Mono.just(true));
 
                 Mono<Usuario> result = usuarioUseCase.createUser(usuario);
 
                 StepVerifier.create(result)
-                        .expectErrorMatches(throwable ->
-                                throwable instanceof BusinessException &&
-                                        ((BusinessException) throwable).getErrorCode() == ErrorCode.USR_002)
-                        .verify();
+                                .expectErrorMatches(throwable -> throwable instanceof BusinessException &&
+                                                ((BusinessException) throwable).getErrorCodes().equals(List.of(ErrorCode.USR_002)))
+                                .verify();
 
                 verify(logger).info("Iniciando creación de usuario");
-                verify(usuarioRepository).existsByEmail("test@test.com");
+                verify(usuarioRepository).existsByEmail("prueba@test.com");
                 verify(usuarioRepository, never()).save(any());
         }
 }

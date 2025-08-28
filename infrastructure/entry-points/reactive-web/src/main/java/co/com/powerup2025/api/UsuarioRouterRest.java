@@ -1,5 +1,6 @@
 package co.com.powerup2025.api;
 
+import co.com.powerup2025.errorhelper.dto.ErrorResponse;
 import org.springdoc.core.annotations.RouterOperation;
 import org.springdoc.core.annotations.RouterOperations;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +25,7 @@ public class UsuarioRouterRest {
                         @RouterOperation(path = "/crediYa/api/v1/usuarios", method = RequestMethod.POST, beanClass = UsuarioHandler.class, beanMethod = "createUser", operation = @Operation(operationId = "createUser", tags = {
                                         "Usuarios" }, summary = "Crear un nuevo usuario", description = "Crea un nuevo usuario en el sistema", requestBody = @RequestBody(required = true, description = "Datos del usuario a crear", content = @Content(mediaType = "application/json", schema = @Schema(implementation = co.com.powerup2025.api.request_dto.UsuarioRequestDTO.class))), responses = {
                                                         @ApiResponse(responseCode = "201", content = @Content(mediaType = "application/json", schema = @Schema(implementation = co.com.powerup2025.api.response_dto.UsuarioResponseDTO.class))),
-                                                        @ApiResponse(responseCode = "400", content = @Content(mediaType = "application/json", schema = @Schema(implementation = co.com.powerup2025.api.response_dto.ErrorResponse.class)))
+                                                        @ApiResponse(responseCode = "400", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
                                         }))
         })
 

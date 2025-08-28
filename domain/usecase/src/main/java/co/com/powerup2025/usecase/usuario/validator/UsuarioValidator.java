@@ -5,9 +5,11 @@ import java.util.regex.Pattern;
 
 import co.com.powerup2025.model.exception.enums.ErrorCode;
 import co.com.powerup2025.model.usuario.Usuario;
-import co.com.powerup2025.usecase.shared.BusinessException;
-import co.com.powerup2025.usecase.spi.LoggerPort;
+import co.com.powerup2025.model.exception.exceptions.BusinessException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 public class UsuarioValidator {
     private static final Pattern emailPattern = Pattern.compile("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
@@ -17,31 +19,30 @@ public class UsuarioValidator {
     }
 
     public static Mono<Usuario> validar(Usuario usuario) {
-        return Mono.just(usuario)
-                .filter(u -> u.getNombre() != null && !u.getNombre().isBlank())
-                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_001)))
-
-                .filter(u -> u.getApellido() != null && !u.getApellido().isBlank())
-                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_002)))
-
-                .filter(u -> u.getEmail() != null && !u.getEmail().isBlank())
-                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_003)))
-
-                .filter(u -> emailPattern.matcher(u.getEmail()).matches())
-                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_009)))
-
-               // .filter(u -> u.getDocumentoIdentidad() != null && u.getDocumentoIdentidad() >= 1000000)
-                //.switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_005)))
-
-                //.filter(u -> u.getTelefono() != null && !u.getTelefono().isBlank())
-                //.switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_006)))
-
-                .filter(u -> u.getIdRol() != null)
-                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_007)))
-
-                .filter(u -> u.getSalarioBase() != null &&
-                        u.getSalarioBase().compareTo(BigDecimal.ZERO) > 0 &&
-                        u.getSalarioBase().compareTo(new BigDecimal("15000000")) <= 0)
-                .switchIfEmpty(Mono.error(new BusinessException(ErrorCode.VAL_008)));
+        return Flux.just(
+                Tuples.of(isBlank(usuario.getNombre()), ErrorCode.VAL_001),
+                Tuples.of(isBlank(usuario.getApellido()), ErrorCode.VAL_002),
+                Tuples.of(isBlank(usuario.getEmail()), ErrorCode.VAL_003),
+                Tuples.of(!isBlank(usuario.getEmail()) && !emailPattern.matcher(usuario.getEmail()).matches(),
+                        ErrorCode.VAL_009),
+                Tuples.of(usuario.getIdRol() == null, ErrorCode.VAL_007),
+                Tuples.of(isSalarioInvalido(usuario.getSalarioBase()), ErrorCode.VAL_008))
+                .filter(Tuple2::getT1)
+                .map(Tuple2::getT2)
+                .collectList()
+                .flatMap(errores -> errores.isEmpty()
+                        ? Mono.just(usuario)
+                        : Mono.error(new BusinessException(errores)));
     }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.isBlank();
+    }
+
+    private static boolean isSalarioInvalido(BigDecimal salario) {
+        return salario == null ||
+                salario.compareTo(BigDecimal.ZERO) <= 0 ||
+                salario.compareTo(new BigDecimal("15000000")) > 0;
+    }
+
 }
