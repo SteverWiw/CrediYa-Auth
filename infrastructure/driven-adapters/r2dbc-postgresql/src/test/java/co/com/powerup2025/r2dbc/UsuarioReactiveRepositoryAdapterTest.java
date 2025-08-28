@@ -22,10 +22,10 @@ import reactor.test.StepVerifier;
 class UsuarioReactiveRepositoryAdapterTest {
 
         @InjectMocks
-        private UsuarioReactiveRepositoryAdapter adapter;
+        private UsuarioRepositoryAdapter adapter;
 
         @Mock
-        private UsuarioReactiveRepository repository;
+        private UsuarioRepository repository;
 
         @Mock
         private ObjectMapper mapper;

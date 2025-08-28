@@ -7,11 +7,11 @@ import org.slf4j.Logger;
 import reactor.core.publisher.Mono;
 
 
-public class ReactiveLoggerAdapter implements LoggerPort {
+public class LoggerPortAdapter implements LoggerPort {
     private final Logger logger;
 
-    public ReactiveLoggerAdapter() {
-        this.logger = org.slf4j.LoggerFactory.getLogger(ReactiveLoggerAdapter.class);
+    public LoggerPortAdapter() {
+        this.logger = org.slf4j.LoggerFactory.getLogger(LoggerPortAdapter.class);
     }
 
 

@@ -5,20 +5,19 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.reactive.TransactionalOperator;
 
 import co.com.powerup2025.model.usuario.Usuario;
-import co.com.powerup2025.model.usuario.gateways.UsuarioRepository;
 import co.com.powerup2025.r2dbc.entity.UsuarioEntity;
-import co.com.powerup2025.r2dbc.helper.ReactiveAdapterOperations;
+import co.com.powerup2025.r2dbc.helper.UsuarioAdapterOperations;
 import reactor.core.publisher.Mono;
 
 @Repository
-public class UsuarioReactiveRepositoryAdapter
-        extends ReactiveAdapterOperations<Usuario, UsuarioEntity, Integer, UsuarioReactiveRepository>
-        implements UsuarioRepository {
+public class UsuarioRepositoryAdapter
+        extends UsuarioAdapterOperations<Usuario, UsuarioEntity, Integer, UsuarioRepository>
+        implements co.com.powerup2025.model.usuario.gateways.UsuarioRepository {
 
     private final TransactionalOperator txOperator;
 
-    public UsuarioReactiveRepositoryAdapter(UsuarioReactiveRepository repository, ObjectMapper mapper,
-            TransactionalOperator txOperator) {
+    public UsuarioRepositoryAdapter(UsuarioRepository repository, ObjectMapper mapper,
+                                    TransactionalOperator txOperator) {
         super(repository, mapper, d -> mapper.mapBuilder(d, Usuario.UsuarioBuilder.class).build());
         this.txOperator = txOperator;
     }
