@@ -1,6 +1,6 @@
 package co.com.powerup2025.api;
 
-import co.com.powerup2025.errorhelper.dto.ErrorResponse;
+import co.com.powerup2025.api.response_dto.ErrorResponse;
 import org.springdoc.core.annotations.RouterOperation;
 import org.springdoc.core.annotations.RouterOperations;
 import org.springframework.context.annotation.Bean;

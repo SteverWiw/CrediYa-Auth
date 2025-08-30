@@ -1,6 +1,7 @@
 package co.com.powerup2025.usecase.usuario;
 
 import co.com.powerup2025.model.exception.enums.ErrorCode;
+import co.com.powerup2025.model.exception.gateways.LoggerFactoryPort;
 import co.com.powerup2025.model.usuario.Usuario;
 import co.com.powerup2025.model.usuario.gateways.UsuarioRepository;
 import co.com.powerup2025.model.exception.exceptions.BusinessException;
@@ -10,11 +11,16 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 import co.com.powerup2025.model.usuario.gateways.UsuarioService;
 
-@RequiredArgsConstructor
+
 public class UsuarioUseCase implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
 
     private final LoggerPort logger;
+
+    public UsuarioUseCase(UsuarioRepository usuarioRepository, LoggerFactoryPort logger) {
+        this.usuarioRepository = usuarioRepository;
+        this.logger = logger.getLogger(UsuarioUseCase.class);
+    }
 
 
     @Override
@@ -32,7 +38,7 @@ public class UsuarioUseCase implements UsuarioService {
     @Override
     public Mono<Usuario> createUser(Usuario user) {
         return UsuarioValidator.validar(user)
-                .doOnSubscribe(s -> logger.info("Iniciando creación de usuario"))
+                .doOnSubscribe(s -> logger.info("Iniciando validacion de usuario"))
                 .flatMap(v -> usuarioRepository.existsByEmail(user.getEmail()))
                 .flatMap(exists -> Boolean.TRUE.equals(exists)
                         ? Mono.error(new BusinessException(ErrorCode.USR_002))

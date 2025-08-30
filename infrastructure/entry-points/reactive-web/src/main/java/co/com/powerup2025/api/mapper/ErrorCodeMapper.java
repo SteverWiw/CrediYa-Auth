@@ -1,4 +1,4 @@
-package co.com.powerup2025.errorhelper.mapper;
+package co.com.powerup2025.api.mapper;
 
 
 import org.springframework.http.HttpStatus;
