@@ -90,18 +90,15 @@ jacoco {
 }
 
 tasks.register('jacocoDomainReport', JacocoReport) {
-    dependsOn = [':model:test', ':usecase:test']
+    dependsOn = [':usecase:test']
 
     additionalSourceDirs.setFrom files(
-        project(':model').sourceSets.main.allSource.srcDirs,
         project(':usecase').sourceSets.main.allSource.srcDirs
     )
     sourceDirectories.setFrom files(
-        project(':model').sourceSets.main.allSource.srcDirs,
         project(':usecase').sourceSets.main.allSource.srcDirs
     )
     classDirectories.setFrom files(
-        project(':model').sourceSets.main.output,
         project(':usecase').sourceSets.main.output
     )
 
