@@ -21,7 +21,6 @@ public class BusinessException extends RuntimeException {
         this.errorCodes = List.copyOf(errorCodes);
     }
 
-
     @Override
     public String toString() {
         if (errorCodes == null || errorCodes.isEmpty()) {

@@ -23,7 +23,7 @@ public class UsuarioValidator {
                 Tuples.of(isBlank(usuario.getNombre()), ErrorCode.VAL_001),
                 Tuples.of(isBlank(usuario.getApellido()), ErrorCode.VAL_002),
                 Tuples.of(isBlank(usuario.getEmail()), ErrorCode.VAL_003),
-                Tuples.of(!isBlank(usuario.getEmail()) && !emailPattern.matcher(usuario.getEmail()).matches(),
+                Tuples.of(!emailPattern.matcher(usuario.getEmail()).matches(),
                         ErrorCode.VAL_009),
                 Tuples.of(usuario.getIdRol() == null, ErrorCode.VAL_007),
                 Tuples.of(isSalarioInvalido(usuario.getSalarioBase()), ErrorCode.VAL_008))
