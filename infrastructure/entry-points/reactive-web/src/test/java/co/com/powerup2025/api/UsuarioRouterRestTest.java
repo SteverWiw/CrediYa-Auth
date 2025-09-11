@@ -1,6 +1,7 @@
 package co.com.powerup2025.api;
 
-import co.com.powerup2025.api.handlers.UsuarioHandler;
+import co.com.powerup2025.api.handlers.UserHandler;
+import co.com.powerup2025.api.mapper.UserMapper;
 import co.com.powerup2025.api.routers.UserRouterRest;
 import co.com.powerup2025.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,14 +9,13 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import co.com.powerup2025.api.mapper.UsuarioMapper;
 import co.com.powerup2025.model.user.gateways.UserRepository;
 import co.com.powerup2025.usecase.user.UserUseCase;
 
 @ContextConfiguration(classes = {
         UserRouterRest.class,
-        UsuarioHandler.class,
-        UsuarioMapper.class,
+        UserHandler.class,
+        UserMapper.class,
         UserUseCase.class,
         User.class
 })
@@ -24,7 +24,7 @@ class UsuarioRouterRestTest {
 
     private UserRepository userRepository;
 
-    private UsuarioMapper usuarioMapper;
+    private UserMapper userMapper;
 
     private UserUseCase usuarioUseCase;
 

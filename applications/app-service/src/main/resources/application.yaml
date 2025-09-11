@@ -26,8 +26,8 @@ adapters:
   r2dbc:
     host: localhost
     port: 5432
-    database: prestamos_db
-    schema: prestamos
+    database: crediya
+    schema: auth
     username: dev_user
     password: dev123
 springdoc:

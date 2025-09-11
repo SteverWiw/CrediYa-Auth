@@ -9,9 +9,9 @@ import static org.mapstruct.factory.Mappers.getMapper;
 
 
 @Mapper(componentModel = "spring")
-public interface UsuarioMapper {
+public interface UserMapper {
 
-    UsuarioMapper INSTANCE = getMapper(UsuarioMapper.class);
+    UserMapper INSTANCE = getMapper(UserMapper.class);
 
     User toEntity(UserRequest dto);
 

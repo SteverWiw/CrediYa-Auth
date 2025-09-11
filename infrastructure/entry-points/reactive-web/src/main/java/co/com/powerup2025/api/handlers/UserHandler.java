@@ -8,24 +8,24 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 
-import co.com.powerup2025.api.mapper.UsuarioMapper;
+import co.com.powerup2025.api.mapper.UserMapper;
 import co.com.powerup2025.api.dtos.request.UserRequest;
 import co.com.powerup2025.model.logger.gateways.LoggerRepository;
 import co.com.powerup2025.model.user.gateways.IUserUseCase;
 import reactor.core.publisher.Mono;
 
 @Component
-public class UsuarioHandler {
+public class UserHandler {
     private final IUserUseCase userUsecase;
-    private final UsuarioMapper mapper;
+    private final UserMapper mapper;
     private final ReactiveErrorHandler errorHelper;
     private final LoggerRepository logger;
 
-    public UsuarioHandler(IUserUseCase userUsecase, UsuarioMapper mapper, ReactiveErrorHandler errorHelper, LoggerFactoryPort logger) {
+    public UserHandler(IUserUseCase userUsecase, UserMapper mapper, ReactiveErrorHandler errorHelper, LoggerFactoryPort logger) {
         this.userUsecase = userUsecase;
         this.mapper = mapper;
         this.errorHelper = errorHelper;
-        this.logger = logger.getLogger(UsuarioHandler.class);
+        this.logger = logger.getLogger(UserHandler.class);
     }
 
     public Mono<ServerResponse> createUser(ServerRequest request) {
