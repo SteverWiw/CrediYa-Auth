@@ -42,7 +42,7 @@ root: INFO
 
 Endpoints
 Método	Ruta	                    Descripción	            Request	            Response
-POST	/crediYa/api/v1/usuarios	Crear un nuevo usuario	UsuarioRequestDTO	UsuarioResponseDTO o ErrorResponse
+POST	/crediYa/api/v1/usuarios	Crear un nuevo user	UsuarioRequestDTO	UsuarioResponseDTO o ErrorResponse
 
 
 Swagger UI disponible en: http://localhost:8080/swagger-ui/index.html

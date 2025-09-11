@@ -9,7 +9,6 @@ import reactor.core.publisher.Hooks;
 public class ContextConfig {
     @PostConstruct
     public void init() {
-        // Habilita propagación automática de contexto (traceId, spanId, MDC, etc.)
         Hooks.enableAutomaticContextPropagation();
     }
 }

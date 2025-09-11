@@ -7,7 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import co.com.powerup2025.usecase.usuario.UsuarioUseCase;
+import co.com.powerup2025.usecase.user.UserUseCase;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @WebFluxTest
@@ -17,7 +17,7 @@ class ConfigTest {
     private WebTestClient webTestClient;
 
     @InjectMocks
-    private UsuarioUseCase usuarioUseCase;
+    private UserUseCase usuarioUseCase;
 
     @Test
     void shouldApplyCorsHeaders() {

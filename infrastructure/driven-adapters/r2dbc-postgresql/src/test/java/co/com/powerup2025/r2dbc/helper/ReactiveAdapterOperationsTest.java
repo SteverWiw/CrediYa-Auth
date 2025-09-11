@@ -20,13 +20,13 @@ class ReactiveAdapterOperationsTest {
 
     private DummyRepository repository;
     private ObjectMapper mapper;
-    private UsuarioAdapterOperations<DummyEntity, DummyData, String, DummyRepository> operations;
+    private ReactiveAdapterOperations<DummyEntity, DummyData, String, DummyRepository> operations;
 
     @BeforeEach
     void setUp() {
         repository = Mockito.mock(DummyRepository.class);
         mapper = Mockito.mock(ObjectMapper.class);
-        operations = new UsuarioAdapterOperations<DummyEntity, DummyData, String, DummyRepository>(
+        operations = new ReactiveAdapterOperations<DummyEntity, DummyData, String, DummyRepository>(
                 repository, mapper, DummyEntity::toEntity) {};
     }
 

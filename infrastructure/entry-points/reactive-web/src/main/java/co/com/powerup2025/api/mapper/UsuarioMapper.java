@@ -1,9 +1,9 @@
 package co.com.powerup2025.api.mapper;
 
 
-import co.com.powerup2025.api.request_dto.UsuarioRequestDTO;
-import co.com.powerup2025.api.response_dto.UsuarioResponseDTO;
-import co.com.powerup2025.model.usuario.Usuario;
+import co.com.powerup2025.api.dtos.request.UserRequest;
+import co.com.powerup2025.api.dtos.response.UserResponse;
+import co.com.powerup2025.model.user.User;
 import org.mapstruct.Mapper;
 import static org.mapstruct.factory.Mappers.getMapper;
 
@@ -13,8 +13,8 @@ public interface UsuarioMapper {
 
     UsuarioMapper INSTANCE = getMapper(UsuarioMapper.class);
 
-    Usuario toEntity(UsuarioRequestDTO dto);
+    User toEntity(UserRequest dto);
 
-    UsuarioResponseDTO toDto(Usuario entity);
+    UserResponse toDto(User entity);
 
 }
