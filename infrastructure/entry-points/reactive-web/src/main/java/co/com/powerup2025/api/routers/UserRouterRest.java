@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 public class UserRouterRest {
     @Bean
     @RouterOperations({
-            @RouterOperation(path = "/crediYa/api/v1/usuarios", method = RequestMethod.POST, beanClass = UserHandler.class, beanMethod = "createUser", operation = @Operation(operationId = "createUser", tags = {
+            @RouterOperation(path = "/crediYa/api/v1/usuarios/create", method = RequestMethod.POST, beanClass = UserHandler.class, beanMethod = "createUser", operation = @Operation(operationId = "createUser", tags = {
                     "Usuarios"}, summary = "Crear un nuevo usuario", description = "Crea un nuevo usuario en el sistema", requestBody = @RequestBody(required = true, description = "Datos del usuario a crear", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserRequest.class))), responses = {
                     @ApiResponse(responseCode = "201", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))),
                     @ApiResponse(responseCode = "400", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
@@ -33,11 +33,11 @@ public class UserRouterRest {
 
     public RouterFunction<ServerResponse> routerFunction(UserHandler handler) {
         return RouterFunctions
-                .nest(RequestPredicates.path("/crediYa"),
+                .nest(RequestPredicates.path("/crediYa/api/v1/usuarios"),
                         RouterFunctions
                                 .route()
-                                .POST("/api/v1/usuarios", handler::createUser)
-                                .GET("/api/v1/usuarios", handler::getUser)
+                                .POST("/create", handler::createUser)
+                                .GET("/getByEmail", handler::getUser)
                                 .build());
     }
 

@@ -39,7 +39,7 @@ public class AuthUseCase implements IAuthUseCase {
 
         return userUseCase.findUserByEmail(email)
                 .doOnSubscribe(sub -> logger.info(String.format("Buscando usuario en BD para: %s", email)))
-                .doOnNext(user -> logger.info(String.format("Usuario encontrado: %s", user.getEmail())))
+                .doOnNext(user -> logger.info(String.format("Usuario encontrado: %s", user.getPassword())))
                 .switchIfEmpty(Mono.defer(() -> {
                     logger.warn(String.format("Usuario no encontrado para email: %s", email));
                     return Mono.error(new BusinessException(ErrorCode.USR_001));

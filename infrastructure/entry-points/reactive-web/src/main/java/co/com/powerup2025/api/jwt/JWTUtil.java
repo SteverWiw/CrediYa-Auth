@@ -30,7 +30,7 @@ public class JWTUtil {
                 .subject(subject)
                 .claim("authorities", List.of(role))
                 .issuedAt(Date.from(Instant.now()))
-                .expiration(Date.from(Instant.now().plus(15, ChronoUnit.MINUTES)))
+                .expiration(Date.from(Instant.now().plus(360, ChronoUnit.MINUTES)))
                 .signWith(secretKey)
                 .compact();
     }

@@ -1,13 +1,16 @@
 package co.com.powerup2025.api.config;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
@@ -57,7 +60,10 @@ public class SecurityConfig {
         });
     }
 
-
+    @Bean
+    public WebProperties.Resources resources() {
+        return new WebProperties().getResources();
+    }
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
@@ -71,6 +77,13 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(withDefaults())
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                /*.exceptionHandling(exceptionHandlingSpec -> exceptionHandlingSpec
+                        .accessDeniedHandler((exchange, denied) ->
+                                Mono.error(new AccessDeniedException("Acceso denegado")))
+                        .authenticationEntryPoint((exchange, authException) ->
+                                Mono.error(new AuthenticationException("No autenticado") {})
+                        )
+                )*/
                 .build();
     }
 

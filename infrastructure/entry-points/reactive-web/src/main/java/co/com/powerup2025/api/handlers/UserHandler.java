@@ -3,6 +3,10 @@ package co.com.powerup2025.api.handlers;
 import co.com.powerup2025.model.exception.enums.ErrorCode;
 import co.com.powerup2025.model.exception.exceptions.BusinessException;
 import co.com.powerup2025.model.logger.gateways.LoggerFactoryPort;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -14,7 +18,10 @@ import co.com.powerup2025.model.logger.gateways.LoggerRepository;
 import co.com.powerup2025.model.user.gateways.IUserUseCase;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Component
+@EnableMethodSecurity
 public class UserHandler {
     private final IUserUseCase userUsecase;
     private final UserMapper mapper;
@@ -28,8 +35,8 @@ public class UserHandler {
         this.logger = logger.getLogger(UserHandler.class);
     }
 
+    /*@PreAuthorize("hasAnyAuthority('ADMIN', 'ASESOR')")
     public Mono<ServerResponse> createUser(ServerRequest request) {
-
 
         return request.bodyToMono(UserRequest.class)
                 .doFirst(() ->  logger.info("Iniciando creación de usuario"))
@@ -42,7 +49,7 @@ public class UserHandler {
                         .then(ServerResponse.ok().bodyValue(userDto)))
                 .doOnTerminate(() -> logger.info("Flujo finalizado"))
                 .onErrorResume(errorHelper::handle);
-    }
+    }*/
 
     public Mono<ServerResponse> getUser(ServerRequest request) {
         String email = request.queryParam("email").orElseThrow(() -> new BusinessException(ErrorCode.VAL_003));
@@ -51,9 +58,32 @@ public class UserHandler {
                 .doOnEach(u -> logger.info(String.format("Datos recibidos: %s", email)))
                 .doOnNext(u -> logger.info(String.format("Usuario encontrado: %s", u)))
                 .flatMap(usuario -> ServerResponse.ok().bodyValue(usuario))
-                .doOnTerminate(() -> logger.info("Flujo finalizado"))
-                .onErrorResume(errorHelper::handle);
+                .doOnTerminate(() -> logger.info("Flujo finalizado")).onErrorResume(errorHelper::handle);
     }
 
+    public Mono<ServerResponse> createUser(ServerRequest request) {
+        return request.principal()
+                .cast(Authentication.class)
+                .flatMap(auth -> {
+                    boolean autorizado = auth.getAuthorities().stream()
+                            .anyMatch(a -> List.of("ADMIN", "ASESOR").contains(a.getAuthority()));
+
+                    if (!autorizado) {
+                        return Mono.error(new AccessDeniedException("Acceso denegado"));
+                    }
+
+                    return request.bodyToMono(UserRequest.class)
+                            .doFirst(() -> logger.info("Iniciando creación de usuario"))
+                            .flatMap(dto -> logger.info(String.format("Datos recibidos: %s", dto)).thenReturn(dto))
+                            .map(mapper::toEntity)
+                            .flatMap(userUsecase::createUser)
+                            .map(mapper::toDto)
+                            .flatMap(userDto -> Mono
+                                    .fromRunnable(() -> logger.info(String.format("Usuario creado: %s", userDto)))
+                                    .then(ServerResponse.ok().bodyValue(userDto)))
+                            .doOnTerminate(() -> logger.info("Flujo finalizado"));
+                })
+                .onErrorResume(errorHelper::handle);
+    }
 
 }
