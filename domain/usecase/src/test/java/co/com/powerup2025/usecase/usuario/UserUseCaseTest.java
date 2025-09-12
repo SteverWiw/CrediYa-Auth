@@ -8,18 +8,20 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.util.List;
 
-import co.com.powerup2025.model.logger.gateways.LoggerFactoryPort;
-import co.com.powerup2025.model.user.User;
-import co.com.powerup2025.usecase.user.UserUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import co.com.powerup2025.model.auth.gateways.PasswordEncoderPort;
 import co.com.powerup2025.model.exception.enums.ErrorCode;
-import co.com.powerup2025.model.user.gateways.UserRepository;
 import co.com.powerup2025.model.exception.exceptions.BusinessException;
+import co.com.powerup2025.model.logger.gateways.LoggerFactoryPort;
+import co.com.powerup2025.model.logger.gateways.LoggerRepository;
+import co.com.powerup2025.model.user.User;
+import co.com.powerup2025.model.user.gateways.UserRepository;
+import co.com.powerup2025.usecase.user.UserUseCase;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -32,13 +34,24 @@ class UserUseCaseTest {
         @Mock
         private LoggerFactoryPort logger;
 
+        @Mock
+        private LoggerRepository loggerRepository;
+
+        @Mock
+        private PasswordEncoderPort passwordEncoder;
+
+
         private UserUseCase usuarioUseCase;
 
         private User user;
 
         @BeforeEach
         void setUp() {
-                usuarioUseCase = new UserUseCase(userRepository, logger);
+
+            when(logger.getLogger(UserUseCase.class)).thenReturn(loggerRepository);
+
+            usuarioUseCase = new UserUseCase(userRepository, passwordEncoder, logger);
+
 
                 user = new User();
                 user.setIdUsuario(1);
@@ -46,7 +59,7 @@ class UserUseCaseTest {
                 user.setNombre("prueba");
                 user.setApellido("prueba");
                 user.setDocumentoIdentidad(123456789L);
-                user.setIdRol(1);
+                user.setIdRol(1L);
                 user.setSalarioBase(BigDecimal.valueOf(150000));
         }
 
