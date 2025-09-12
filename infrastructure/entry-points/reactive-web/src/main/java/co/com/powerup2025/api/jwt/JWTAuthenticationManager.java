@@ -1,9 +1,10 @@
 package co.com.powerup2025.api.jwt;
 
 
-import co.com.powerup2025.model.user.gateways.IUserUseCase;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,11 +14,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import co.com.powerup2025.model.user.gateways.IUserUseCase;
+import reactor.core.publisher.Mono;
 
 @Component
 public class JWTAuthenticationManager implements ReactiveAuthenticationManager {
@@ -32,16 +31,13 @@ public class JWTAuthenticationManager implements ReactiveAuthenticationManager {
 
     @Bean
     public ServerAuthenticationConverter authenticationConverter() {
-        return new ServerAuthenticationConverter() {
-            @Override
-            public Mono<Authentication> convert(ServerWebExchange exchange) {
-                String token = exchange.getRequest().getHeaders().getFirst("Authorization");
-                if (token != null && token.startsWith("Bearer ")) {
-                    token = token.substring(7);
-                    return Mono.just(SecurityContextHolder.getContext().getAuthentication());
-                }
-                return Mono.empty();
+        return exchange -> {
+            String token = exchange.getRequest().getHeaders().getFirst("Authorization");
+            if (token != null && token.startsWith("Bearer ")) {
+                token = token.substring(7);
+                return Mono.just(SecurityContextHolder.getContext().getAuthentication());
             }
+            return Mono.empty();
         };
     }
 

@@ -1,17 +1,16 @@
 package co.com.powerup2025.usecase.usuario;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import co.com.powerup2025.model.auth.gateways.PasswordEncoderPort;
@@ -63,19 +62,19 @@ class UserUseCaseTest {
                 user.setSalarioBase(BigDecimal.valueOf(150000));
         }
 
-       /* @Test
+         @Test
         void shouldReturnTrueWhenUserExistsByEmail() {
-                when(usuarioRepository.existsByEmail("prueba@test.com"))
+                when(userRepository.existsByEmail("prueba@test.com"))
                                 .thenReturn(Mono.just(true));
 
-                Mono<Boolean> result = usuarioUseCase.userExistsByEmail("prueba@test.com");
+                Mono<Boolean> result = userRepository.existsByEmail("prueba@test.com");
 
                 StepVerifier.create(result)
                                 .expectNext(true)
                                 .verifyComplete();
 
-                verify(usuarioRepository).existsByEmail("prueba@test.com");
-        }*/
+                verify(userRepository).existsByEmail("prueba@test.com");
+        }
 
         @Test
         void shouldCreateUserWhenEmailNotExists() {
@@ -91,8 +90,6 @@ class UserUseCaseTest {
                                 .expectNextMatches(u -> u.getEmail().equals("prueba@test.com"))
                                 .verifyComplete();
 
-                //verify(logger).info("Iniciando creación de usuario");
-                //verify(logger).info("Usuario creado exitosamente");
                 verify(userRepository).existsByEmail("prueba@test.com");
                 verify(userRepository).save(any(User.class));
         }
@@ -109,7 +106,6 @@ class UserUseCaseTest {
                                                 ((BusinessException) throwable).getErrorCodes().equals(List.of(ErrorCode.USR_002)))
                                 .verify();
 
-                //verify(logger).info("Iniciando creación de usuario");
                 verify(userRepository).existsByEmail("prueba@test.com");
                 verify(userRepository, never()).save(any());
         }

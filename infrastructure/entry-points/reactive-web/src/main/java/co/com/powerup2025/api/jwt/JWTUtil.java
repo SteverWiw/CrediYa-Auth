@@ -1,33 +1,38 @@
 package co.com.powerup2025.api.jwt;
 
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JWTUtil {
 
     private final SecretKey secretKey;
+    private final String issuer;
 
-    public JWTUtil() {
-        String secretKeyString = "H8PVV7h2qr3AnAhpJ5vRCEHDbGP1Vm5R";
+    public JWTUtil(@Value("${security.jwt.secret}") String secretKeyString,
+                   @Value("${security.jwt.issuer}") String issuer) {
         this.secretKey = Keys.hmacShaKeyFor(secretKeyString.getBytes(StandardCharsets.UTF_8));
+        this.issuer = issuer;
     }
+
 
     public String createToken(String subject, String role) {
         return Jwts.builder()
                 .subject(subject)
+                .issuer(issuer)
                 .claim("authorities", List.of(role))
                 .issuedAt(Date.from(Instant.now()))
                 .expiration(Date.from(Instant.now().plus(360, ChronoUnit.MINUTES)))
@@ -46,7 +51,8 @@ public class JWTUtil {
     public boolean isTokenValid(String token, String expectedUsername) {
         Claims claims = parseToken(token);
         return claims.getExpiration().after(Date.from(Instant.now())) &&
-                claims.getSubject().equals(expectedUsername);
+                claims.getSubject().equals(expectedUsername) &&
+                claims.getIssuer().equals(issuer); // 👈 Validación cruzada del issuer
     }
 
     public List<String> getRoles(String token) {

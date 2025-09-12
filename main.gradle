@@ -103,7 +103,6 @@ tasks.register('jacocoDomainReport', JacocoReport) {
     )
 
     executionData.setFrom fileTree(dir: '.', include: [
-        'domain/model/build/jacoco/test.exec',
         'domain/usecase/build/jacoco/test.exec'
     ])
 
@@ -111,7 +110,7 @@ tasks.register('jacocoDomainReport', JacocoReport) {
         xml.required = true
         xml.outputLocation = layout.buildDirectory.file("reports/jacocoDomain/jacocoDomain.xml")
         html.required = true
-        html.outputLocation = layout.buildDirectory.dir("reports/jacocoDomain/html")
+        html.outputLocation = layout.buildDirectory.dir("reports/jacocoDomain.html")
     }
 }
 
