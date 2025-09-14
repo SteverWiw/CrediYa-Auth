@@ -65,7 +65,6 @@ subprojects {
         exportLineCoverage = true
         useClasspathFile = true
         timestampedReports = false
-        //mutators = ['STRONGER', 'DEFAULTS']
         fileExtensionsToFilter.addAll('xml', 'orbit')
         junit5PluginVersion = '1.2.2'
         failWhenNoMutations = false
@@ -93,28 +92,27 @@ tasks.register('jacocoDomainReport', JacocoReport) {
     dependsOn = [':usecase:test']
 
     additionalSourceDirs.setFrom files(
-        project(':usecase').sourceSets.main.allSource.srcDirs
+            project(':usecase').sourceSets.main.allSource.srcDirs
     )
     sourceDirectories.setFrom files(
-        project(':usecase').sourceSets.main.allSource.srcDirs
+            project(':usecase').sourceSets.main.allSource.srcDirs
     )
     classDirectories.setFrom files(
-        project(':usecase').sourceSets.main.output
+            project(':usecase').sourceSets.main.output
     )
 
     executionData.setFrom fileTree(dir: '.', include: [
-        'domain/usecase/build/jacoco/test.exec'
+            'domain/model/build/jacoco/test.exec',
+            'domain/usecase/build/jacoco/test.exec'
     ])
 
     reports {
         xml.required = true
         xml.outputLocation = layout.buildDirectory.file("reports/jacocoDomain/jacocoDomain.xml")
         html.required = true
-        html.outputLocation = layout.buildDirectory.dir("reports/jacocoDomain.html")
+        html.outputLocation = layout.buildDirectory.dir("reports/jacocoDomain/html")
     }
 }
-
-
 
 
 tasks.withType(JavaCompile).configureEach {

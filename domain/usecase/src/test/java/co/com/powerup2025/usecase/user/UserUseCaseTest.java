@@ -1,16 +1,17 @@
 package co.com.powerup2025.usecase.usuario;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import co.com.powerup2025.model.auth.gateways.PasswordEncoderPort;
@@ -27,86 +28,160 @@ import reactor.test.StepVerifier;
 @ExtendWith(MockitoExtension.class)
 class UserUseCaseTest {
 
-        @Mock
-        private UserRepository userRepository;
+    @Mock
+    private UserRepository userRepository;
 
-        @Mock
-        private LoggerFactoryPort logger;
+    @Mock
+    private LoggerFactoryPort logger;
 
-        @Mock
-        private LoggerRepository loggerRepository;
+    @Mock
+    private LoggerRepository loggerRepository;
 
-        @Mock
-        private PasswordEncoderPort passwordEncoder;
+    @Mock
+    private PasswordEncoderPort passwordEncoder;
 
+    @Mock
+    private UserUseCase usuarioUseCase;
 
-        private UserUseCase usuarioUseCase;
+    private User user;
 
-        private User user;
+    @BeforeEach
+    void setUp() {
 
-        @BeforeEach
-        void setUp() {
+        when(logger.getLogger(UserUseCase.class)).thenReturn(loggerRepository);
 
-            when(logger.getLogger(UserUseCase.class)).thenReturn(loggerRepository);
+        usuarioUseCase = new UserUseCase(userRepository, passwordEncoder, logger);
 
-            usuarioUseCase = new UserUseCase(userRepository, passwordEncoder, logger);
+        user = new User();
+        user.setIdUsuario(1);
+        user.setEmail("prueba@test.com");
+        user.setNombre("prueba");
+        user.setApellido("prueba");
+        user.setDocumentoIdentidad(123456789L);
+        user.setIdRol(1L);
+        user.setSalarioBase(BigDecimal.valueOf(150000));
+    }
 
+    @Test
+    void shouldReturnTrueWhenUserExistsByEmail() {
+        when(userRepository.existsByEmail("prueba@test.com"))
+                .thenReturn(Mono.just(true));
 
-                user = new User();
-                user.setIdUsuario(1);
-                user.setEmail("prueba@test.com");
-                user.setNombre("prueba");
-                user.setApellido("prueba");
-                user.setDocumentoIdentidad(123456789L);
-                user.setIdRol(1L);
-                user.setSalarioBase(BigDecimal.valueOf(150000));
-        }
+        Mono<Boolean> result = userRepository.existsByEmail("prueba@test.com");
 
-         @Test
-        void shouldReturnTrueWhenUserExistsByEmail() {
-                when(userRepository.existsByEmail("prueba@test.com"))
-                                .thenReturn(Mono.just(true));
+        StepVerifier.create(result)
+                .expectNext(true)
+                .verifyComplete();
 
-                Mono<Boolean> result = userRepository.existsByEmail("prueba@test.com");
+        verify(userRepository).existsByEmail("prueba@test.com");
+    }
 
-                StepVerifier.create(result)
-                                .expectNext(true)
-                                .verifyComplete();
+    @Test
+    void shouldCreateUserWhenEmailNotExists() {
+        when(userRepository.existsByEmail("prueba@test.com"))
+                .thenReturn(Mono.just(false));
 
-                verify(userRepository).existsByEmail("prueba@test.com");
-        }
+        when(userRepository.save(any(User.class)))
+                .thenReturn(Mono.just(user));
 
-        @Test
-        void shouldCreateUserWhenEmailNotExists() {
-                when(userRepository.existsByEmail("prueba@test.com"))
-                                .thenReturn(Mono.just(false));
+        Mono<User> result = usuarioUseCase.createUser(user);
 
-                when(userRepository.save(any(User.class)))
-                                .thenReturn(Mono.just(user));
+        StepVerifier.create(result)
+                .expectNextMatches(u -> u.getEmail().equals("prueba@test.com"))
+                .verifyComplete();
 
-                Mono<User> result = usuarioUseCase.createUser(user);
+        verify(userRepository).existsByEmail("prueba@test.com");
+        verify(userRepository).save(any(User.class));
+    }
 
-                StepVerifier.create(result)
-                                .expectNextMatches(u -> u.getEmail().equals("prueba@test.com"))
-                                .verifyComplete();
+    @Test
+    void shouldFailWhenEmailAlreadyExists() {
+        when(userRepository.existsByEmail("prueba@test.com"))
+                .thenReturn(Mono.just(true));
 
-                verify(userRepository).existsByEmail("prueba@test.com");
-                verify(userRepository).save(any(User.class));
-        }
+        Mono<User> result = usuarioUseCase.createUser(user);
 
-        @Test
-        void shouldFailWhenEmailAlreadyExists() {
-                when(userRepository.existsByEmail("prueba@test.com"))
-                                .thenReturn(Mono.just(true));
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable -> throwable instanceof BusinessException
+                && ((BusinessException) throwable).getErrorCodes().equals(List.of(ErrorCode.USR_002)))
+                .verify();
 
-                Mono<User> result = usuarioUseCase.createUser(user);
+        verify(userRepository).existsByEmail("prueba@test.com");
+        verify(userRepository, never()).save(any());
+    }
 
-                StepVerifier.create(result)
-                                .expectErrorMatches(throwable -> throwable instanceof BusinessException &&
-                                                ((BusinessException) throwable).getErrorCodes().equals(List.of(ErrorCode.USR_002)))
-                                .verify();
+    @Test
+    void shouldFailValidationWithBlankFields() {
+        User invalidUser = User.builder()
+                .email("")
+                .nombre("")
+                .apellido("")
+                .password("")
+                .build();
 
-                verify(userRepository).existsByEmail("prueba@test.com");
-                verify(userRepository, never()).save(any());
-        }
+        Mono<User> result = usuarioUseCase.createUser(invalidUser);
+
+        StepVerifier.create(result)
+                .expectErrorMatches(error
+                        -> error instanceof BusinessException
+                && ((BusinessException) error).getErrorCodes().contains(ErrorCode.VAL_001)
+                && ((BusinessException) error).getErrorCodes().contains(ErrorCode.VAL_002)
+                && ((BusinessException) error).getErrorCodes().contains(ErrorCode.VAL_003)
+                )
+                .verify();
+    }
+
+    @Test
+    void shouldFailValidationWithInvalidEmailFormat() {
+        user.setEmail("correo-invalido");
+
+        Mono<User> result = usuarioUseCase.createUser(user);
+
+        StepVerifier.create(result)
+                .expectErrorMatches(error
+                        -> error instanceof BusinessException
+                && ((BusinessException) error).getErrorCodes().contains(ErrorCode.VAL_009)
+                )
+                .verify();
+    }
+
+    @Test
+    void shouldFailValidationWithInvalidSalary() {
+        user.setSalarioBase(BigDecimal.valueOf(0)); // salario inválido
+
+        Mono<User> result = usuarioUseCase.createUser(user);
+
+        StepVerifier.create(result)
+                .expectErrorMatches(error
+                        -> error instanceof BusinessException
+                && ((BusinessException) error).getErrorCodes().contains(ErrorCode.VAL_008)
+                )
+                .verify();
+    }
+
+    @Test
+    void shouldFindUserByEmailSuccessfully() {
+        when(userRepository.getUserByEmail(user.getEmail())).thenReturn(Mono.just(user));
+
+        Mono<User> result = usuarioUseCase.findUserByEmail(user.getEmail());
+
+        StepVerifier.create(result)
+                .expectNextMatches(u -> u.getEmail().equals("prueba@test.com"))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldFailWhenUserNotFoundByEmail() {
+        when(userRepository.getUserByEmail(user.getEmail())).thenReturn(Mono.empty());
+
+        Mono<User> result = usuarioUseCase.findUserByEmail(user.getEmail());
+
+        StepVerifier.create(result)
+                .expectErrorMatches(error
+                        -> error instanceof BusinessException
+                && ((BusinessException) error).getErrorCodes().contains(ErrorCode.USR_003)
+                )
+                .verify();
+    }
+
 }
