@@ -1,17 +1,17 @@
 server:
   port: 8080
+
 spring:
   application:
     name: "CrediYa"
   devtools:
     add-properties: false
-  h2:
-    console:
-      enabled: true
-      path: "/h2"
   profiles:
     include: null
 management:
+  tracing:
+    sampling:
+      probability: 1.0
   endpoints:
     web:
       exposure:
@@ -20,14 +20,35 @@ management:
     health:
       probes:
         enabled: true
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:H8PVV7h2qr3AnAhpJ5vRCEHDbGP1Vm5R}
+    issuer: ${JWT_ISSUER:crediya-auth}
+
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 
 adapters:
   r2dbc:
-    host: localhost
-    port: 5432
-    database: prestamos_db
-    schema: prestamos
-    username: dev_user
-    password: dev123
+    host: ${DB_HOST:localhost}
+    port: ${DB_PORT:5432}
+    database: ${DB_NAME:crediya}
+    schema: ${DB_SCHEMA:auth}
+    username: ${DB_USER:dev_user}
+    password: ${DB_PASSWORD:dev123}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    format: yaml
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+logging:
+  pattern:
+    level: "%5p [traceId=%X{traceId}, spanId=%X{spanId}]"
+    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %clr(%5p) [traceId=%X{traceId}, spanId=%X{spanId}] %logger{36} : %msg%n"
+  level:
+    org.springdoc: DEBUG

@@ -25,24 +25,24 @@ Configuración
 Configura la base de datos PostgreSQL y las credenciales en application.yml:
 
 adapters:
-  r2dbc:
-    host: localhost
-    port: 5432
-    database: tu_bd
-    schema: tu_schema
-    username: tu_username
-    password: tu_password
+r2dbc:
+host: localhost
+port: 5432
+database: tu_bd
+schema: tu_schema
+username: tu_username
+password: tu_password
 
 
 Variables opcionales:
 
 logging:
-  level:
-    root: INFO
+level:
+root: INFO
 
 Endpoints
 Método	Ruta	                    Descripción	            Request	            Response
-POST	/crediYa/api/v1/usuarios	Crear un nuevo usuario	UsuarioRequestDTO	UsuarioResponseDTO o ErrorResponse
+POST	/crediYa/api/v1/usuarios	Crear un nuevo user	UsuarioRequestDTO	UsuarioResponseDTO o ErrorResponse
 
 
 Swagger UI disponible en: http://localhost:8080/swagger-ui/index.html
